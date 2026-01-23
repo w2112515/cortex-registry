@@ -1,0 +1,48 @@
+# Node.js
+node_modules/
+dist/
+build/
+.pnpm-debug.log
+.npm
+*.log
+
+# Foundry
+out/
+# cache/
+broadcast/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Turbo
+.turbo/
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Project State & Temporary
+.gemini/
+doc/
+.project_state/
+
+# Excluded from public repo
+.agent/
+.shared/
+docs/
+reports/
+research/
+tests/
+
+# Python Virtual Environment
+.venv/
+__pycache__/
+*.pyc
+
+# k6 / Slither Outputs
+slither_report.txt
+k6.zip

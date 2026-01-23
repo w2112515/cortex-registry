@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============ Precision Constellation Theme (Task-26g) ============ */
+:root {
+  --void-black: #030303;
+  --grid-line: rgba(255, 255, 255, 0.03);
+  /* 极淡网格 */
+  --signal-platinum: #E8E8E8;
+  --signal-electric: #00D4FF;
+  --signal-amber: #FF9F1C;
+  --signal-dim: #4A4A4A;
+  --glass-surface: rgba(20, 20, 20, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--void-black);
+  color: #e2e8f0;
+}
+
+/* ============ Background Layers (Simplified) ============ */
+.deep-space-bg {
+  position: fixed;
+  inset: 0;
+  background: #030303;
+  /* 纯黑背景 */
+  z-index: -3;
+}
+
+/* Precision Grid Overlay - 极淡秩序感网格 */
+.cyber-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 1;
+  /* 网格已内置透明度 */
+  z-index: -2;
+}
+
+/* void-canvas variant for NetworkGraph container */
+.void-canvas {
+  background: #030303;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Scanline Effect - 降低强度 */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.05) 50%,
+      rgba(0, 0, 0, 0.05));
+  background-size: 100% 4px;
+  animation: scanline 10s linear infinite;
+  pointer-events: none;
+  z-index: 998;
+  opacity: 0.3;
+  /* 降低到 30% */
+}
+
+/* Vignette - 减弱暗角 */
+.vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  z-index: 997;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+/* ============ Glass Utilities ============ */
+@layer utilities {
+  .glass-panel {
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2), 0 0 20px rgba(0, 212, 255, 0.1);
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+  }
+
+  .border-glow-cyan {
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    box-shadow: inset 0 0 10px rgba(0, 212, 255, 0.05);
+  }
+}
+
+/* ============ Star Node Styles ============ */
+.star-node {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.star-node:hover {
+  filter: brightness(1.5);
+}
+
+/* Breathing Animation for High-Reputation Nodes */
+@keyframes breathe {
+
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.star-node-glow {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* Stellar (80%+) - Enhanced breathing */
+.star-node-stellar .star-node-glow {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+/* Highlighted node (search match) */
+.star-node-highlighted {
+  filter: brightness(1.8) drop-shadow(0 0 10px var(--neon-cyan));
+}
+
+/* Particle effect placeholder - shimmer */
+@keyframes shimmer {
+  0% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
+}
+
+.particle-effect {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Connection Lines */
+.connection-line {
+  stroke: var(--neon-cyan);
+  stroke-width: 1;
+  opacity: 0.2;
+}
+
+/* ============ Scrollbar ============ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d1b4e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4361ee;
+}

@@ -1,0 +1,22 @@
+{
+    "name": "@cortex/scripts",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "watchdog": "tsx watchdog.ts",
+        "watchdog:dry": "tsx watchdog.ts --dry-run",
+        "watchdog:single": "tsx watchdog.ts --single-run",
+        "integration": "tsx integration-check.ts",
+        "seed": "tsx seed-services.ts",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "viem": "^2.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
+    }
+}
