@@ -128,6 +128,14 @@ Pending → Active → [Challenged] → Slashed | Withdrawn
 
 ---
 
+## 📜 Deployed Contracts (Cronos Testnet)
+
+| Network | Contract | Address | Explorer |
+|---------|----------|---------|----------|
+| Cronos Testnet (338) | CortexRegistry | `0xfe5f7b0ae5018eb2853c31fc28c4c9a339052587` | [View](https://cronos.org/explorer/testnet3/address/0xfe5f7b0ae5018eb2853c31fc28c4c9a339052587) |
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -136,6 +144,7 @@ Pending → Active → [Challenged] → Slashed | Withdrawn
 - pnpm ≥ 8.x  
 - Docker (for Redis)
 - Foundry (for contracts)
+- Cronos Testnet TCRO from [Faucet](https://cronos.org/faucet)
 
 ### Installation
 

@@ -46,3 +46,19 @@ __pycache__/
 # k6 / Slither Outputs
 slither_report.txt
 k6.zip
+k6_report.txt
+k6_results.json
+
+# Debug / Temp
+debug_output.txt
+gateway_logs.txt
+*.csv
+
+# AI Editor Configs
+.agents/
+.codex/
+.windsurf/
+
+# Project Management (local only)
+AI_MEMORY.md
+DECISION_LOG.md
