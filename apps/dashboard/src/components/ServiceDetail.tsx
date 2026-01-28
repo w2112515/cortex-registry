@@ -6,6 +6,14 @@ interface ServiceDetailProps {
     onClose: () => void;
 }
 
+const STATE_CONFIG: Record<number, { label: string; color: string; bg: string; border: string }> = {
+    0: { label: 'PENDING', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/50' },
+    1: { label: 'ACTIVE', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/50' },
+    2: { label: 'CHALLENGED', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/50' },
+    3: { label: 'SLASHED', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/50' },
+    4: { label: 'WITHDRAWN', color: 'text-zinc-500', bg: 'bg-zinc-500/10', border: 'border-zinc-500/50' },
+};
+
 const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onClose }) => {
     if (!service) return null;
 
@@ -13,6 +21,11 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onClose }) => {
         <div className="absolute right-0 top-0 bottom-0 w-80 bg-[#050505]/95 border-l border-grid-line backdrop-blur-md transform transition-transform duration-300 translate-x-0 z-50 flex flex-col">
             {/* Header */}
             <div className="p-6 border-b border-grid-line relative overflow-hidden">
+                {service.state === 3 && (
+                    <div className="absolute top-0 left-0 right-0 bg-red-900/50 text-red-200 text-[10px] font-bold py-1 text-center animate-pulse border-b border-red-500/50">
+                        ⛔ SLASHED FOR MALICIOUS BEHAVIOR
+                    </div>
+                )}
                 <div className="absolute top-0 right-0 p-2">
                     <button
                         onClick={onClose}
@@ -27,11 +40,15 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onClose }) => {
                 <div className="mb-1 text-xs font-mono text-neon-cyan tracking-widest">[NODE_DETAILS]</div>
                 <h2 className="text-2xl font-display font-bold text-white mb-2 text-glow-cyan">{service.name}</h2>
                 <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-0.5 text-[10px] font-mono border rounded ${service.state === 1 ? 'border-green-500/50 text-green-400 bg-green-500/10' : 'border-red-500/50 text-red-400 bg-red-500/10'
-                        }`}>
-                        {service.state === 1 ? 'ACTIVE' : 'CHALLENGED'}
-                    </span>
-                    <span className="px-2 py-0.5 text-[10px] font-mono border border-neon-iolet/50 text-neon-violet bg-neon-violet/10">
+                    {(() => {
+                        const config = STATE_CONFIG[service.state] || STATE_CONFIG[0];
+                        return (
+                            <span className={`px-2 py-0.5 text-[10px] font-mono border rounded ${config.border} ${config.color} ${config.bg}`}>
+                                {config.label}
+                            </span>
+                        );
+                    })()}
+                    <span className="px-2 py-0.5 text-[10px] font-mono border border-neon-violet/50 text-neon-violet bg-neon-violet/10">
                         {service.type}
                     </span>
                 </div>
@@ -40,18 +57,30 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onClose }) => {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {/* Reputation */}
-                <div>
-                    <div className="flex justify-between text-xs font-mono text-gray-400 mb-2">
-                        <span>REPUTATION_SCORE</span>
-                        <span className="text-neon-cyan">{service.reputation?.bayesianScore ?? 0}%</span>
+                {/* Reputation - Hidden if Slashed/Withdrawn */}
+                {service.state !== 3 && service.state !== 4 && (
+                    <div>
+                        <div className="flex justify-between text-xs font-mono text-gray-400 mb-2">
+                            <span>REPUTATION_SCORE</span>
+                            <span className="text-neon-cyan">{service.reputation?.bayesianScore ?? 0}%</span>
+                        </div>
+                        <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-neon-blue to-neon-cyan"
+                                style={{ width: `${service.reputation?.bayesianScore ?? 0}%` }}
+                            />
+                        </div>
                     </div>
-                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-gradient-to-r from-neon-blue to-neon-cyan"
-                            style={{ width: `${service.reputation?.bayesianScore ?? 0}%` }}
-                        />
+                )}
+                {(service.state === 3 || service.state === 4) && (
+                    <div className="opacity-50 grayscale">
+                        <div className="flex justify-between text-xs font-mono text-gray-600 mb-2">
+                            <span>REPUTATION_SCORE</span>
+                            <span>N/A</span>
+                        </div>
+                        <div className="h-2 bg-gray-900 rounded-full" />
                     </div>
-                </div>
+                )}
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4">

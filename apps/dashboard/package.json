@@ -22,6 +22,7 @@
     "@xyflow/react": "^12.10.0",
     "connectkit": "^1.9.1",
     "d3": "^7.9.0",
+    "lucide-react": "^0.563.0",
     "next": "14.2.35",
     "porto": "^0.2.37",
     "react": "^18",

@@ -1,0 +1,125 @@
+﻿slither : 'forge clean' running (wd: D:\Work\Cronos x402\
+packages\contracts)
+所在位置 行:1 字符: 1
++ slither . --foundry-out-dir out --filter-paths "lib|tes
+t" --print con ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('forge clea 
+   n' r...ages\contracts):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+'forge config --json' running
+'forge build --build-info --skip ./test/** ./script/** --
+force' running (wd: D:\Work\Cronos x402\packages\contract
+s)
+INFO:Printers:
++ Contract ReentrancyGuard
+  - From ReentrancyGuard
+    - _nonReentrantAfter() (private)
+    - _nonReentrantBefore() (private)
+    - _nonReentrantBeforeView() (private)
+    - _reentrancyGuardEntered() (internal)
+    - _reentrancyGuardStorageSlot() (internal)
+    - constructor() (internal)
+
++ Contract StorageSlot (Most derived contract)
+  - From StorageSlot
+    - getAddressSlot(bytes32) (internal)
+    - getBooleanSlot(bytes32) (internal)
+    - getBytes32Slot(bytes32) (internal)
+    - getBytesSlot(bytes) (internal)
+    - getBytesSlot(bytes32) (internal)
+    - getInt256Slot(bytes32) (internal)
+    - getStringSlot(bytes32) (internal)
+    - getStringSlot(string) (internal)
+    - getUint256Slot(bytes32) (internal)
+
++ Contract CortexRegistry (Most derived contract)
+  - From ReentrancyGuard
+    - _nonReentrantAfter() (private)
+    - _nonReentrantBefore() (private)
+    - _nonReentrantBeforeView() (private)
+    - _reentrancyGuardEntered() (internal)
+    - _reentrancyGuardStorageSlot() (internal)
+    - constructor() (internal)
+  - From CortexRegistry
+    - _getService(bytes32) (internal)
+    - _safeTransfer(address,uint256) (internal)
+    - activateService(bytes32) (external)
+    - challengeService(bytes32,bytes32) (external)
+    - constructor(uint256,address,address) (public)
+    - getService(bytes32) (external)
+    - registerService(string) (external)
+    - resolveChallenge(bytes32,bool) (external)
+    - withdrawStake(bytes32) (external)
+
++ Contract Counter (Most derived contract)
+  - From Counter
+    - increment() (public)
+    - setNumber(uint256) (public)
+
++ Contract SessionKeyManager (Most derived contract)
+  - From ReentrancyGuard
+    - _nonReentrantAfter() (private)
+    - _nonReentrantBefore() (private)
+    - _nonReentrantBeforeView() (private)
+    - _reentrancyGuardEntered() (internal)
+    - _reentrancyGuardStorageSlot() (internal)
+  - From SessionKeyManager
+    - _getSession(bytes32) (internal)
+    - constructor() (public)
+    - createSession(address,uint256,uint256,bytes32[],uin
+t64) (external)
+    - executeWithSession(bytes32,bytes32) (external)
+    - getOwnerSessions(address) (external)
+    - getRemainingDailyLimit(bytes32) (external)
+    - getSession(bytes32) (external)
+    - revokeSession(bytes32) (external)
+    - validateSession(bytes32,bytes32,uint256) (external)
+
++ Contract ICortexRegistry
+  - From ICortexRegistry
+    - activateService(bytes32) (external)
+    - challengeService(bytes32,bytes32) (external)
+    - getService(bytes32) (external)
+    - registerService(string) (external)
+    - resolveChallenge(bytes32,bool) (external)
+    - withdrawStake(bytes32) (external)
+
++ Contract ISessionKeyManager
+  - From ISessionKeyManager
+    - createSession(address,uint256,uint256,bytes32[],uin
+t64) (external)
+    - executeWithSession(bytes32,bytes32) (external)
+    - getOwnerSessions(address) (external)
+    - getRemainingDailyLimit(bytes32) (external)
+    - getSession(bytes32) (external)
+    - revokeSession(bytes32) (external)
+    - validateSession(bytes32,bytes32,uint256) (external)
+
++ Contract AntiSybil (Most derived contract)
+  - From AntiSybil
+    - calculateStakeRequirement(uint256,uint256,uint256) 
+(internal)
+    - calculateStakeRequirementDefault(uint256,uint256) (
+internal)
+    - calculateSybilAttackCost(uint256,uint256,uint256,ui
+nt256) (internal)
+    - calculateTotalStakeForServices(uint256,uint256,uint
+256) (internal)
+    - canRegisterService(uint256) (internal)
+    - validateAndCalculateStake(uint256,uint256,uint256,a
+ddress) (internal)
+
++ Contract ReputationMath (Most derived contract)
+  - From ReputationMath
+    - calculateBayesianScore(uint256,uint256,uint256,uint
+256) (internal)
+    - calculateBayesianScoreDefault(uint256,uint256) (int
+ernal)
+    - calculateCallsToReachScore(uint256,uint256,uint256)
+ (internal)
+    - calculateWilsonSimple(uint256,uint256) (internal)
+
+INFO:Slither:. analyzed (9 contracts)

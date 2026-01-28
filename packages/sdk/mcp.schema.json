@@ -1,0 +1,62 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MCP Service Metadata",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "description": "Human-readable name of the MCP service"
+        },
+        "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 500,
+            "description": "Detailed description of what the service does"
+        },
+        "endpoint": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://",
+            "description": "The base URL where the MCP service is hosted"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "description": "Semantic version of the service"
+        },
+        "capabilities": {
+            "type": "object",
+            "properties": {
+                "prompts": {
+                    "type": "boolean"
+                },
+                "resources": {
+                    "type": "boolean"
+                },
+                "tools": {
+                    "type": "boolean"
+                },
+                "logging": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "maxItems": 10
+        }
+    },
+    "required": [
+        "name",
+        "description",
+        "endpoint",
+        "capabilities"
+    ],
+    "additionalProperties": true
+}

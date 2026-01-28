@@ -109,39 +109,99 @@ const REGISTRY_ABI = [
 
 const testServices = [
     {
-        name: 'Cortex Knowledge Base',
-        description: 'AI-powered knowledge graph and semantic search',
-        capabilities: ['knowledge-graph', 'semantic-search', 'embeddings'],
+        name: '[TESTNET] Cortex Knowledge Base',
+        description: 'AI-powered knowledge graph and semantic search. DEMO ONLY - endpoint returns 501.',
+        version: '1.0.0',
+        endpoint: 'https://httpbin.org/status/501',
+        capabilities: {
+            tools: true,
+            resources: false,
+            prompts: false,
+        },
+        tools: [
+            {
+                name: 'semantic_search',
+                description: 'Search knowledge graph using natural language',
+                inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] },
+            },
+        ],
         pricePerCall: '0.001',
-        endpoint: 'https://api.cortex.demo/knowledge',
     },
     {
-        name: 'Vision Analyzer',
-        description: 'Multi-modal image analysis and object detection',
-        capabilities: ['image-analysis', 'object-detection', 'ocr'],
+        name: '[TESTNET] Vision Analyzer',
+        description: 'Multi-modal image analysis and object detection. DEMO ONLY.',
+        version: '1.0.0',
+        endpoint: 'https://httpbin.org/status/501',
+        capabilities: {
+            tools: true,
+            resources: false,
+            prompts: false,
+        },
+        tools: [
+            {
+                name: 'analyze_image',
+                description: 'Detect objects and extract text from images',
+                inputSchema: { type: 'object', properties: { imageUrl: { type: 'string' } }, required: ['imageUrl'] },
+            },
+        ],
         pricePerCall: '0.002',
-        endpoint: 'https://api.cortex.demo/vision',
     },
     {
-        name: 'Code Synthesizer',
-        description: 'Advanced code generation and refactoring',
-        capabilities: ['code-gen', 'refactoring', 'test-gen'],
+        name: '[TESTNET] Code Synthesizer',
+        description: 'Advanced code generation and refactoring. DEMO ONLY.',
+        version: '1.0.0',
+        endpoint: 'https://httpbin.org/status/501',
+        capabilities: {
+            tools: true,
+            resources: false,
+            prompts: true,
+        },
+        tools: [
+            {
+                name: 'generate_code',
+                description: 'Generate code from natural language specification',
+                inputSchema: { type: 'object', properties: { spec: { type: 'string' }, language: { type: 'string' } }, required: ['spec'] },
+            },
+        ],
         pricePerCall: '0.005',
-        endpoint: 'https://api.cortex.demo/code',
     },
     {
-        name: 'Data Transformer',
-        description: 'Schema transformation and data pipeline orchestration',
-        capabilities: ['etl', 'schema-mapping', 'streaming'],
+        name: '[TESTNET] Data Transformer',
+        description: 'Schema transformation and data pipeline orchestration. DEMO ONLY.',
+        version: '1.0.0',
+        endpoint: 'https://httpbin.org/status/501',
+        capabilities: {
+            tools: true,
+            resources: true,
+            prompts: false,
+        },
+        tools: [
+            {
+                name: 'transform_schema',
+                description: 'Convert data between different schema formats',
+                inputSchema: { type: 'object', properties: { input: { type: 'object' }, targetFormat: { type: 'string' } }, required: ['input'] },
+            },
+        ],
         pricePerCall: '0.003',
-        endpoint: 'https://api.cortex.demo/transform',
     },
     {
-        name: 'Security Sentinel',
-        description: 'Smart contract auditing and vulnerability detection',
-        capabilities: ['audit', 'vulnerability-scan', 'compliance'],
+        name: '[TESTNET] Security Sentinel',
+        description: 'Smart contract auditing and vulnerability detection. DEMO ONLY.',
+        version: '1.0.0',
+        endpoint: 'https://httpbin.org/status/501',
+        capabilities: {
+            tools: true,
+            resources: false,
+            prompts: false,
+        },
+        tools: [
+            {
+                name: 'audit_contract',
+                description: 'Analyze Solidity code for common vulnerabilities',
+                inputSchema: { type: 'object', properties: { sourceCode: { type: 'string' } }, required: ['sourceCode'] },
+            },
+        ],
         pricePerCall: '0.01',
-        endpoint: 'https://api.cortex.demo/security',
     },
 ];
 

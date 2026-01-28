@@ -40,12 +40,36 @@ const defaultConfig: RedisConfig = {
 };
 
 // Singleton Redis client
-let redisClient: RedisInstance | null = null;
+let redisClient: any | null = null;
+const isMockMode = process.env.MOCK_MODE === 'true';
 
 /**
  * Initialize Redis connection
  */
-export async function initRedis(config: Partial<RedisConfig> = {}): Promise<RedisInstance> {
+export async function initRedis(config: Partial<RedisConfig> = {}): Promise<any> {
+    if (isMockMode) {
+        console.log('⚠️ [Redis] Running in MOCK_MODE. No real connection will be established.');
+        redisClient = {
+            status: 'ready',
+            on: () => { },
+            get: async () => null,
+            set: async () => 'OK',
+            setex: async () => 'OK',
+            del: async () => 1,
+            exists: async () => 0,
+            keys: async () => [],
+            incr: async () => 1,
+            expire: async () => 1,
+            pipeline: () => ({
+                get: () => { },
+                exec: async () => []
+            }),
+            connect: async () => { },
+            quit: async () => { }
+        };
+        return redisClient;
+    }
+
     const mergedConfig = { ...defaultConfig, ...config };
 
     if (redisClient) {
@@ -109,7 +133,9 @@ export function getRedis(): RedisInstance {
  * Check if Redis is connected
  */
 export function isRedisConnected(): boolean {
-    return redisClient?.status === 'ready';
+    if (!redisClient) return false;
+    if (isMockMode) return true;
+    return redisClient.status === 'ready';
 }
 
 /**

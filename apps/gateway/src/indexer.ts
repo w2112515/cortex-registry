@@ -92,6 +92,10 @@ function getPublicClient(): PublicClient {
  * @see Task-35: 实现 Indexer 启动时历史事件同步
  */
 async function syncHistoricalEvents(): Promise<number> {
+    if (process.env.MOCK_MODE === 'true') {
+        console.log('⚠️ [Indexer] Skipping historical sync in MOCK_MODE');
+        return 0;
+    }
     const client = getPublicClient();
     const currentBlock = await client.getBlockNumber();
 
@@ -180,6 +184,11 @@ async function syncHistoricalEvents(): Promise<number> {
  * Start the indexer
  */
 export async function startIndexer(): Promise<void> {
+    if (process.env.MOCK_MODE === 'true') {
+        console.log('⚠️ [Indexer] Mock Indexer started (No chain watcher)');
+        indexerState.isRunning = true;
+        return;
+    }
     if (indexerState.isRunning) {
         console.log('[Indexer] Already running');
         return;

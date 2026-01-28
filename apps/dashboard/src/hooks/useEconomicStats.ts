@@ -30,7 +30,7 @@ export function useEconomicStats() {
         const data = await res.json();
 
         const services = data.services || [];
-        
+
         // Calculate statistics from services
         let totalStake = BigInt(0);
         let totalReputation = 0;
@@ -40,18 +40,27 @@ export function useEconomicStats() {
           // Parse stake (could be string or number)
           const stake = BigInt(service.stake || '0');
           totalStake += stake;
-          
+
           // Count active services (state === 1)
           if (service.state === 1 || service.state === 'Active') {
             activeCount++;
           }
 
           // Sum reputation for average
-          totalReputation += Number(service.reputation || 0);
+          if (service.reputation) {
+            // Handle both string (BigInt) and number formats
+            const score = typeof service.reputation === 'object'
+              ? Number(service.reputation.bayesianScore || 0)
+              : Number(service.reputation || 0);
+
+            // Normalize BigInt score (1e18) to 0-100 range if needed, or keeping as is if already normalized
+            // Assuming bayesianScore comes as BigInt string (decimals: 18)
+            totalReputation += score;
+          }
         }
 
-        const avgRep = services.length > 0 
-          ? totalReputation / services.length 
+        const avgRep = services.length > 0
+          ? totalReputation / services.length
           : 0;
 
         // Volume is simulated as we don't have real payment tracking yet

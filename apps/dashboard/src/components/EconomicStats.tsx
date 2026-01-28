@@ -51,7 +51,7 @@ const EconomicStats: React.FC<EconomicStatsProps> = ({ className = '' }) => {
             />
             <KpiCard
                 title="Avg Reputation"
-                value={`${(stats.avgReputation / 1e18 * 100).toFixed(1)}%`}
+                value={`${(stats.avgReputation / 1e18).toFixed(1)}%`}
                 trend="stable"
                 color="violet"
             />

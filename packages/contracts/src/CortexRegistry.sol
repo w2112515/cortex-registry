@@ -59,7 +59,7 @@ contract CortexRegistry is ICortexRegistry, ReentrancyGuard {
     mapping(bytes32 => bytes32) private _evidences;
 
     /// @notice Track service count per provider for AntiSybil
-    mapping(address => uint256) private _providerServiceCount;
+
 
     // ============ Errors ============
 

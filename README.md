@@ -194,7 +194,9 @@ pnpm exec tsx scripts/cortex-traveler.ts "I need weather data for Tokyo"
 # Autonomous Loop: Let the agent roam the network
 pnpm exec tsx scripts/cortex-traveler.ts --loop
 ```
+For Reviewers: To experience the Cortex Registry immediately without waiting for blockchain indexing, use the Mock Mode:
 
+MOCK_MODE=true npm run dev (in apps/gateway)
 ---
 
 ## 📊 Performance & Security

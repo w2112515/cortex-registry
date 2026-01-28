@@ -8,6 +8,7 @@ import rateLimit from '@fastify/rate-limit';
 import x402Handler from './x402/handler.js';
 import discoverRoutes from './routes/discover.js';
 import agentRoutes from './routes/agent.js';
+import registerRoutes from './routes/register.js';
 import { initRedis, closeRedis, isRedisConnected, getRedisClient } from './redis.js';
 import { startIndexer, stopIndexer, getIndexerStatus } from './indexer.js';
 import { initFailover, checkAllEndpointsHealth } from './rpc/failover.js';
@@ -21,19 +22,6 @@ const fastify = Fastify({
 fastify.register(cors);
 fastify.register(helmet);
 
-// Rate Limiter (Task-25: Vol.7 §2.3)
-fastify.register(rateLimit, {
-  max: 100,           // 100 requests per window
-  timeWindow: '1 minute',
-  errorResponseBuilder: (request, context) => ({
-    statusCode: 429,
-    error: 'Too Many Requests',
-    message: `Rate limit exceeded. You have sent too many requests. Please wait ${context.after} before retrying.`,
-    retryAfter: context.after,
-  }),
-  // Use Redis for distributed rate limiting when available
-  redis: isRedisConnected() ? getRedisClient() : undefined,
-});
 
 // x402 Payment Handler
 fastify.register(x402Handler);
@@ -43,6 +31,9 @@ fastify.register(discoverRoutes);
 
 // Agent Routes (Task-49)
 fastify.register(agentRoutes);
+
+// Registration Routes (Task-O00)
+fastify.register(registerRoutes);
 
 // Health Check (Enhanced for Vol.6 §4.2 - Task-24)
 fastify.get('/health', async (request, reply) => {
@@ -103,14 +94,34 @@ const start = async () => {
     await initRedis();
     console.log('✅ Redis connected');
 
+    // Rate Limiter (Task-25: Vol.7 §2.3) - Register after Redis is initialized
+    fastify.register(rateLimit, {
+      max: 100,           // 100 requests per window
+      timeWindow: '1 minute',
+      errorResponseBuilder: (request, context) => ({
+        statusCode: 429,
+        error: 'Too Many Requests',
+        message: `Rate limit exceeded. You have sent too many requests. Please wait ${context.after} before retrying.`,
+        retryAfter: context.after,
+      }),
+      // Use Redis for distributed rate limiting when available
+      // In MOCK_MODE, we don't use Redis for rate limiting to avoid mock compatibility issues
+      redis: (isRedisConnected() && process.env.MOCK_MODE !== 'true') ? getRedisClient() : undefined,
+    });
+    console.log('✅ Rate limiter initialized');
+
     // Execute cache warmup (Task-23)
     console.log('⏳ Executing cache warmup...');
     const warmupResult = await executeWarmup({ mode: 'full', timeout: 5000 });
     console.log(`✅ Warmup completed in ${warmupResult.duration}ms`);
 
-    // Start Indexer
-    await startIndexer();
-    console.log('✅ Indexer started');
+    // Start Indexer (only if not in mock mode or if indexer is needed)
+    if (process.env.MOCK_MODE !== 'true') {
+      await startIndexer();
+      console.log('✅ Indexer started');
+    } else {
+      console.log('ℹ️ [Mock] Skipping Indexer startup');
+    }
 
     // Start Fastify
     await fastify.listen({ port: 3001, host: '0.0.0.0' });

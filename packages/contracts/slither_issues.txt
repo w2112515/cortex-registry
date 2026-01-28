@@ -1,0 +1,35 @@
+﻿slither : Traceback (most recent call last):
+所在位置 行:1 字符: 1
++ slither . --foundry-out-dir out --filter-paths "lib|tes
+t" --print iss ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback ( 
+   most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\w2112\AppData\Local\Programs\Python\Pyth
+on313\Scripts\slither.exe\__main__.py", line 6, in <modul
+e>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\w2112\AppData\Local\Programs\Python\Pyth
+on313\Lib\site-packages\slither\__main__.py", line 760, i
+n main
+    main_impl(all_detector_classes=detectors, all_printer
+_classes=printers)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
+  File "C:\Users\w2112\AppData\Local\Programs\Python\Pyth
+on313\Lib\site-packages\slither\__main__.py", line 800, i
+n main_impl
+    printer_classes = choose_printers(args, all_printer_c
+lasses)
+  File "C:\Users\w2112\AppData\Local\Programs\Python\Pyth
+on313\Lib\site-packages\slither\__main__.py", line 266, i
+n choose_printers
+    raise ValueError(f"Error: {printer} is not a printer"
+)
+ValueError: Error: issue-summary is not a printer

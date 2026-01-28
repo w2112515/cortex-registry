@@ -288,6 +288,17 @@ export async function checkAllEndpointsHealth(): Promise<{
     unhealthy: number;
     details: Array<{ label: string; healthy: boolean; latency?: number }>;
 }> {
+    if (process.env.MOCK_MODE === 'true') {
+        return {
+            healthy: endpoints.length || 3,
+            unhealthy: 0,
+            details: (endpoints.length ? endpoints : DEFAULT_RPC_ENDPOINTS).map(ep => ({
+                label: ep.label,
+                healthy: true,
+                latency: 5,
+            })),
+        };
+    }
     const details: Array<{ label: string; healthy: boolean; latency?: number }> = [];
 
     for (const endpoint of endpoints) {

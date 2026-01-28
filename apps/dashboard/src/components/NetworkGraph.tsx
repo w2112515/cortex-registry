@@ -85,7 +85,10 @@ const generateLinks = (nodes: ServiceNode[]): ServiceLink[] => {
  */
 const getNodeColor = (node: ServiceNode): string => {
     if (node.state === 2) return COLORS.red; // Challenged
-    const score = node.reputation?.bayesianScore ?? 50;
+    // Normalize BigInt string (1e18) to 0-100
+    const rawScore = Number(node.reputation?.bayesianScore || 0);
+    const score = rawScore > 100 ? rawScore / 1e18 : rawScore;
+
     if (score >= 80) return COLORS.platinum;
     if (score >= 60) return COLORS.electric;
     if (score >= 40) return COLORS.amber;
@@ -93,19 +96,41 @@ const getNodeColor = (node: ServiceNode): string => {
 };
 
 /**
- * Get node radius (3-6px micro-dot style)
- * Precision Constellation: 微点风格取代大光球
+ * Get node radius (3-8px based on Stake)
+ * Precision Constellation: Logarithmic scale (100 CRO -> 3px, 100k CRO -> 8px)
  */
 const getNodeRadius = (node: ServiceNode): number => {
-    const score = node.reputation?.bayesianScore ?? 50;
-    return 3 + (score / 20); // 3-6px range
+    try {
+        const stakeWei = BigInt(node.stake || '0');
+        const stakeCRO = Number(stakeWei / BigInt(10 ** 18));
+
+        const minStake = 100;
+        const maxStake = 100000;
+        const minRadius = 6;  // Increased from 3
+        const maxRadius = 18; // Increased from 8
+
+        if (stakeCRO <= minStake) return minRadius;
+        if (stakeCRO >= maxStake) return maxRadius;
+
+        // Log scale interpolation
+        const range = maxRadius - minRadius;
+        const logMin = Math.log(minStake);
+        const logMax = Math.log(maxStake);
+        const scale = (Math.log(stakeCRO) - logMin) / (logMax - logMin);
+
+        return minRadius + (scale * range);
+    } catch (e) {
+        return 3; // Fallback
+    }
 };
 
 /**
  * Check if node is a top performer (Stellar tier)
  */
 const isTopNode = (node: ServiceNode): boolean => {
-    return (node.reputation?.bayesianScore ?? 0) >= 80;
+    const rawScore = Number(node.reputation?.bayesianScore || 0);
+    const score = rawScore > 100 ? rawScore / 1e18 : rawScore;
+    return score >= 80;
 };
 
 // ============ Component ============
@@ -168,12 +193,17 @@ export default function NetworkGraph({ className = '', nodes: externalNodes = []
         const { connections } = createConnectionMap(links, nodes);
 
         // Sort nodes by reputation (highest first for center positioning)
-        nodes.sort((a, b) =>
-            (b.reputation?.bayesianScore ?? 0) - (a.reputation?.bayesianScore ?? 0)
-        );
+        nodes.sort((a, b) => {
+            const scoreA = Number(a.reputation?.bayesianScore || 0);
+            const scoreB = Number(b.reputation?.bayesianScore || 0);
+            return scoreB - scoreA;
+        });
 
         // Calculate max score for scaling
-        const maxScore = Math.max(...nodes.map(n => n.reputation?.bayesianScore ?? 0));
+        const maxScore = Math.max(...nodes.map(n => {
+            const s = Number(n.reputation?.bayesianScore || 0);
+            return s > 100 ? s / 1e18 : s;
+        }));
 
         // Radial Scale: higher score = closer to center
         const radialScale = d3.scaleLinear()
@@ -183,7 +213,9 @@ export default function NetworkGraph({ className = '', nodes: externalNodes = []
         // Apply radial layout positions
         nodes.forEach((node, i) => {
             const angle = (i / nodes.length) * 2 * Math.PI - Math.PI / 2; // Start from top
-            const radius = radialScale(node.reputation?.bayesianScore ?? 0);
+            const rawScore = Number(node.reputation?.bayesianScore || 0);
+            const score = rawScore > 100 ? rawScore / 1e18 : rawScore;
+            const radius = radialScale(score);
             node.x = centerX + radius * Math.cos(angle);
             node.y = centerY + radius * Math.sin(angle);
         });
@@ -233,6 +265,7 @@ export default function NetworkGraph({ className = '', nodes: externalNodes = []
             .enter()
             .append('g')
             .attr('class', 'star-node')
+            .style('filter', 'url(#glow)') // Add Neon Glow
             .attr('transform', d => `translate(${d.x}, ${d.y})`)
             .call(d3.drag<SVGGElement, ServiceNode>()
                 .on('start', function (event, d) {
@@ -375,18 +408,37 @@ export default function NetworkGraph({ className = '', nodes: externalNodes = []
 
     return (
         <div ref={containerRef} className={`relative w-full h-full void-canvas ${className}`}>
-            {/* SVG Defs */}
+            {/* SVG Defs for Glow Effects */}
             <svg className="absolute w-0 h-0">
                 <defs>
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+                        <feMerge>
+                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
                     <style>
                         {`
                             @keyframes pulse {
                                 0%, 100% { opacity: 0.3; transform: scale(1); }
                                 50% { opacity: 0.6; transform: scale(1.1); }
                             }
+                            .grid-background {
+                                mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+                            }
                         `}
                     </style>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                    </pattern>
                 </defs>
+            </svg>
+
+            {/* Background Grid */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                <rect width="100%" height="100%" fill="url(#grid)" />
+                <rect width="100%" height="100%" fill="radial-gradient(circle at 50% 50%, transparent 0%, #030303 100%)" />
             </svg>
 
             {/* Main SVG */}
@@ -394,7 +446,7 @@ export default function NetworkGraph({ className = '', nodes: externalNodes = []
                 ref={svgRef}
                 width={dimensions.width}
                 height={dimensions.height}
-                className="cursor-grab active:cursor-grabbing"
+                className="cursor-grab active:cursor-grabbing relative z-10"
             />
 
             {/* Hover Tooltip */}
@@ -423,7 +475,7 @@ export default function NetworkGraph({ className = '', nodes: externalNodes = []
                         <div className="flex justify-between">
                             <span className="text-signal-dim">Reputation</span>
                             <span className="text-signal-electric font-medium">
-                                {hoveredNode.reputation?.bayesianScore ?? 'N/A'}%
+                                {(Number(hoveredNode.reputation?.bayesianScore || 0) / 1e18).toFixed(1)}%
                             </span>
                         </div>
                         <div className="flex justify-between">

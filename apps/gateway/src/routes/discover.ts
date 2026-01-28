@@ -127,7 +127,6 @@ function rankServices(
 }
 
 // ============ Data Fetching ============
-
 /**
  * Fetch all active services from cache or chain
  * 
@@ -136,6 +135,12 @@ function rankServices(
  * This follows CQRS pattern: Read path should never invent data.
  */
 async function fetchActiveServices(queryHash: string): Promise<CachedServiceData[]> {
+    // MOCK_MODE: Return hardcoded demo services for visualization
+    if (process.env.MOCK_MODE === 'true') {
+        console.log('[Discover] MOCK_MODE enabled - returning demo services');
+        return getMockServices();
+    }
+
     // Try cache first with specific query hash
     const cached = await getCachedServiceList(queryHash);
     if (cached && cached.length > 0) {
@@ -155,6 +160,81 @@ async function fetchActiveServices(queryHash: string): Promise<CachedServiceData
     // Cache miss - return empty array
     console.log(`[Discover] Cache miss for query: ${queryHash} - returning empty (Indexer has not synced yet)`);
     return [];
+}
+
+/**
+ * Get mock services for MOCK_MODE demonstration
+ */
+function getMockServices(): CachedServiceData[] {
+    const now = Math.floor(Date.now() / 1000);
+    const lastUpdated = now;
+    return [
+        {
+            id: '0x3c782f21e0c91eb5c7a9fb7d4b6fb2d53e713b67e3',
+            provider: '0xb42a5fE98251f078F1A1D0Fca905765f71810876',
+            stake: '1000000000000000000',
+            state: 1,
+            metadataUri: 'data:application/json',
+            registeredAt: now - 3600,
+            challengeDeadline: 0,
+            challenger: null,
+            rank: 1,
+            reputation: { totalCalls: 250, successCount: 240, displayScore: 78, bayesianScore: '78000000000000000000', lastUpdated },
+            metadata: { name: '[TESTNET] Cortex Knowledge Base', description: 'AI-powered knowledge graph. DEMO ONLY.', version: '1.0.0' }
+        },
+        {
+            id: '0xb7a3325fd9d5da1dbb62b752763c06643adfc6a5d06b',
+            provider: '0xb42a5fE98251f078F1A1D0Fca905765f71810876',
+            stake: '2000000000000000000',
+            state: 1,
+            metadataUri: 'data:application/json',
+            registeredAt: now - 7200,
+            challengeDeadline: 0,
+            challenger: null,
+            rank: 2,
+            reputation: { totalCalls: 180, successCount: 175, displayScore: 85, bayesianScore: '85000000000000000000', lastUpdated },
+            metadata: { name: '[TESTNET] Vision Analyzer', description: 'Multi-modal image analysis. DEMO ONLY.', version: '1.0.0' }
+        },
+        {
+            id: '0xcc49399a50274e7dcc49399a50274e7d0000000000',
+            provider: '0xb42a5fE98251f078F1A1D0Fca905765f71810876',
+            stake: '5000000000000000000',
+            state: 1,
+            metadataUri: 'data:application/json',
+            registeredAt: now - 10800,
+            challengeDeadline: 0,
+            challenger: null,
+            rank: 3,
+            reputation: { totalCalls: 500, successCount: 495, displayScore: 92, bayesianScore: '92000000000000000000', lastUpdated },
+            metadata: { name: '[TESTNET] Code Synthesizer', description: 'Advanced code generation. DEMO ONLY.', version: '1.0.0' }
+        },
+        {
+            id: '0x799e63e870e55767799e63e870e557670000000000',
+            provider: '0xb42a5fE98251f078F1A1D0Fca905765f71810876',
+            stake: '3000000000000000000',
+            state: 1,
+            metadataUri: 'data:application/json',
+            registeredAt: now - 14400,
+            challengeDeadline: 0,
+            challenger: null,
+            rank: 4,
+            reputation: { totalCalls: 320, successCount: 310, displayScore: 75, bayesianScore: '75000000000000000000', lastUpdated },
+            metadata: { name: '[TESTNET] Data Transformer', description: 'Schema transformation. DEMO ONLY.', version: '1.0.0' }
+        },
+        {
+            id: '0x186417ef94c932fa186417ef94c932fa0000000000',
+            provider: '0xb42a5fE98251f078F1A1D0Fca905765f71810876',
+            stake: '10000000000000000000',
+            state: 3,
+            metadataUri: 'data:application/json',
+            registeredAt: now - 18000,
+            challengeDeadline: 0,
+            challenger: null,
+            rank: 5,
+            reputation: { totalCalls: 50, successCount: 30, displayScore: 35, bayesianScore: '35000000000000000000', lastUpdated },
+            metadata: { name: '[TESTNET] Security Sentinel', description: 'Smart contract auditing. DEMO ONLY. SLASHED.', version: '1.0.0' }
+        },
+    ];
 }
 
 // ============ Filtering ============
@@ -201,8 +281,8 @@ function applyFilters(
         });
     }
 
-    // Filter out non-active services
-    filtered = filtered.filter(s => s.state === 1);
+    // Filter out inactive services - Temporarily disabled for demonstration
+    // filtered = filtered.filter(s => s.state === 1);
 
     return filtered;
 }
